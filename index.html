@@ -1,0 +1,957 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cerebral Companions | OCD Support</title>
+
+<style>
+:root {
+  --primary: #635bce;
+  --bg: #f5f6fc;
+  --text: #252744;
+  --muted: #73758d;
+  --border: #e7e7f1;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+header {
+  background: white;
+  padding: 16px 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo { font-size: 22px; font-weight: bold; color: var(--primary); }
+
+nav { display: flex; gap: 14px; flex-wrap: wrap; }
+
+nav a {
+  text-decoration: none;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.container { width: 90%; max-width: 1200px; margin: auto; }
+
+.hero {
+  margin-top: 25px;
+  padding: 42px 30px;
+  border-radius: 22px;
+  background: linear-gradient(120deg,#e9e8ff,#f3edff,#e6f6f4);
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 20px;
+  align-items: center;
+}
+
+.hero h1 { font-size: clamp(30px,4vw,45px); line-height: 1.2; margin: 14px 0; }
+.hero p, .card p { color: var(--muted); }
+.hero-art { text-align: center; font-size: 85px; }
+
+.badge {
+  background: white;
+  color: var(--primary);
+  border-radius: 20px;
+  padding: 7px 12px;
+  font-size: 12px;
+}
+
+.button {
+  display: inline-block;
+  border: none;
+  background: var(--primary);
+  color: white;
+  padding: 11px 16px;
+  border-radius: 9px;
+  cursor: pointer;
+  text-decoration: none;
+  margin: 7px 5px 0 0;
+}
+
+.button.secondary { background: white; color: var(--primary); border: 1px solid var(--border); }
+
+section { margin-top: 36px; scroll-margin-top: 20px; }
+.section-heading { margin-bottom: 16px; }
+.section-heading h2 { font-size: 25px; }
+.section-heading p { font-size: 14px; color: var(--muted); }
+
+.grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 17px; }
+
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 21px;
+}
+
+.card h3 { margin: 8px 0; }
+.card p { font-size: 14px; }
+.icon { font-size: 30px; }
+
+input, select, textarea {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #dcdced;
+  border-radius: 9px;
+  margin: 6px 0 12px;
+  font: inherit;
+  background: white;
+  color: var(--text);
+}
+
+textarea { resize: vertical; min-height: 75px; }
+label { font-size: 13px; font-weight: bold; }
+
+.mood-options { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+
+.mood {
+  flex: 1;
+  min-width: 70px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 5px;
+  cursor: pointer;
+}
+
+.mood span { display: block; font-size: 24px; }
+.mood.selected { background: #efedff; border: 2px solid var(--primary); }
+
+.center { text-align: center; }
+
+.breath-circle {
+  width: 150px;
+  height: 150px;
+  margin: 20px auto;
+  border-radius: 50%;
+  background: #eeebff;
+  border: 5px solid #c9c3ff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: transform 3s, background 2s;
+}
+
+.breath-circle.expand { transform: scale(1.1); background: #dff7f0; }
+.timer { font-size: 27px; font-weight: bold; }
+
+.task {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-top: 9px;
+}
+
+.task input { width: auto; }
+
+.notice {
+  background: #fff6df;
+  border-left: 4px solid #e7b34d;
+  border-radius: 9px;
+  padding: 14px;
+  font-size: 13px;
+  margin-top: 14px;
+}
+
+.good-notice {
+  background: #e7f7ef;
+  padding: 13px;
+  border-radius: 9px;
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+.stat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+
+.stat {
+  background: #efedff;
+  padding: 16px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.stat strong { display: block; color: var(--primary); font-size: 25px; }
+
+.progress-track { background: #e9e8f3; height: 10px; border-radius: 20px; margin: 12px 0; }
+.progress-fill { height: 100%; width: 0; background: var(--primary); border-radius: 20px; }
+
+.video-link {
+  display: block;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--primary);
+  margin-top: 12px;
+  font-weight: bold;
+}
+
+.small { font-size: 12px; color: var(--muted); }
+
+footer {
+  background: #292743;
+  color: white;
+  text-align: center;
+  margin-top: 40px;
+  padding: 30px;
+}
+
+footer p { color: #d6d4e9; font-size: 13px; }
+
+/* AI CHATBOT INTERFACE */
+
+.ai-wrapper {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  min-height: 560px;
+  box-shadow: 0 8px 25px #2828500a;
+}
+
+.ai-sidebar {
+  background: linear-gradient(160deg,#eeedff,#f7f3ff);
+  padding: 22px 18px;
+  border-right: 1px solid var(--border);
+}
+
+.ai-profile {
+  text-align: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #dedbf5;
+}
+
+.ai-avatar {
+  width: 75px;
+  height: 75px;
+  background: white;
+  border-radius: 50%;
+  margin: 0 auto 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 38px;
+}
+
+.ai-profile h3 { color: #39336f; }
+
+.ai-online { color: #198754; font-size: 12px; }
+
+.ai-tip {
+  background: white;
+  border-radius: 10px;
+  padding: 12px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #625b92;
+}
+
+.ai-sidebar p { font-size: 13px; color: var(--muted); margin-top: 12px; }
+
+.ai-chat-area { display: flex; flex-direction: column; min-width: 0; }
+
+.ai-chat-header {
+  padding: 18px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.ai-chat-header h3 { font-size: 18px; }
+.ai-chat-header p { font-size: 12px; color: var(--muted); }
+
+.ai-clear-button {
+  background: white;
+  color: var(--primary);
+  border: 1px solid #dedbf5;
+  border-radius: 8px;
+  padding: 7px 10px;
+  cursor: pointer;
+}
+
+.ai-messages {
+  flex: 1;
+  min-height: 320px;
+  max-height: 420px;
+  overflow-y: auto;
+  padding: 22px;
+  background: #fcfcff;
+}
+
+.ai-message { display: flex; gap: 10px; margin-bottom: 18px; align-items: flex-start; }
+.ai-message.user { flex-direction: row-reverse; }
+
+.ai-message-avatar {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #eeecff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ai-message.user .ai-message-avatar { background: #dff7eb; }
+
+.ai-bubble {
+  max-width: 85%;
+  background: #efedff;
+  padding: 13px 15px;
+  border-radius: 4px 15px 15px 15px;
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.ai-message.user .ai-bubble {
+  background: #dff7eb;
+  border-radius: 15px 4px 15px 15px;
+}
+
+.ai-quick-actions { padding: 13px 18px; border-top: 1px solid var(--border); }
+.ai-quick-actions p { font-size: 12px; color: var(--muted); margin-bottom: 9px; }
+
+.ai-prompt-list { display: flex; flex-wrap: wrap; gap: 7px; }
+
+.ai-prompt {
+  background: white;
+  border: 1px solid #dcd8ff;
+  color: var(--primary);
+  border-radius: 20px;
+  padding: 8px 11px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.ai-input-area {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  padding: 14px 18px;
+  border-top: 1px solid var(--border);
+}
+
+.ai-input-area input { flex: 1; min-width: 0; margin: 0; border-radius: 25px; padding: 12px 15px; }
+
+.ai-send-button {
+  width: 45px;
+  height: 45px;
+  border: none;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.ai-privacy { text-align: center; font-size: 11px; color: var(--muted); padding: 0 10px 14px; }
+
+@media(max-width:800px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-art { font-size: 60px; }
+  .grid { grid-template-columns: 1fr; }
+  .ai-wrapper { grid-template-columns: 1fr; }
+  .ai-sidebar { border-right: none; border-bottom: 1px solid var(--border); }
+  .ai-profile { display: flex; align-items: center; gap: 12px; text-align: left; }
+  .ai-avatar { width: 55px; height: 55px; font-size: 28px; margin: 0; }
+  .ai-tip { display: none; }
+  .stat-grid { grid-template-columns: 1fr; }
+  header { align-items: flex-start; flex-direction: column; }
+  nav { gap: 10px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">🧠 Cerebral Companions</div>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#mood">Mood Tracker</a>
+    <a href="#exercises">Exercises</a>
+    <a href="#erp">ERP Learning</a>
+    <a href="#videos">Videos</a>
+    <a href="#ai-chat">AI Companion</a>
+    <a href="#consultants">Consultants</a>
+    <a href="#progress">Progress</a>
+  </nav>
+</header>
+
+<main class="container">
+
+  <!-- HOME -->
+  <section class="hero" id="home">
+    <div>
+      <span class="badge">YOUR PERSONAL WELL-BEING SPACE</span>
+      <h1>A calmer mind,<br>a step at a time.</h1>
+      <p>A supportive space to record your mood, practise relaxation,
+      learn about OCD, and build healthy habits.</p>
+      <a class="button" href="#mood">Check In Today →</a>
+      <a class="button secondary" href="#ai-chat">Talk to AI Companion</a>
+    </div>
+    <div class="hero-art">🌿🧠</div>
+  </section>
+
+  <!-- FEATURES -->
+  <section>
+    <div class="section-heading">
+      <h2>Welcome to Your Safe Space 💜</h2>
+      <p>Small steps count. Take your time.</p>
+    </div>
+    <div class="grid">
+      <div class="card"><div class="icon">🌤️</div><h3>Daily Check-in</h3><p>Record how you feel each day.</p><a class="button" href="#mood">Check In</a></div>
+      <div class="card"><div class="icon">🌬️</div><h3>Relax & Breathe</h3><p>Try a gentle breathing activity.</p><a class="button" href="#exercises">Start Exercise</a></div>
+      <div class="card"><div class="icon">💜</div><h3>AI Companion</h3><p>Explore a supportive chat interface.</p><a class="button" href="#ai-chat">Open Chat</a></div>
+    </div>
+  </section>
+
+  <!-- MOOD TRACKER -->
+  <section id="mood">
+    <div class="section-heading"><h2>🌈 Daily Mood Tracker</h2><p>There are no right or wrong feelings.</p></div>
+    <div class="card">
+      <label for="moodDate">Date</label>
+      <input type="date" id="moodDate">
+      <label>How are you feeling?</label>
+      <div class="mood-options">
+        <button class="mood" data-mood="Great" onclick="selectMood(this)"><span>😄</span>Great</button>
+        <button class="mood" data-mood="Okay" onclick="selectMood(this)"><span>🙂</span>Okay</button>
+        <button class="mood" data-mood="Anxious" onclick="selectMood(this)"><span>😟</span>Anxious</button>
+        <button class="mood" data-mood="Low" onclick="selectMood(this)"><span>😔</span>Low</button>
+        <button class="mood" data-mood="Overwhelmed" onclick="selectMood(this)"><span>😣</span>Overwhelmed</button>
+      </div>
+      <label for="anxiety">Discomfort intensity (0–10)</label>
+      <input type="range" id="anxiety" min="0" max="10" value="3" oninput="document.getElementById('anxietyValue').textContent=this.value">
+      <p>Intensity: <strong id="anxietyValue">3</strong>/10</p>
+      <label for="moodNote">Notes (optional)</label>
+      <textarea id="moodNote" placeholder="What would you like to remember about today?"></textarea>
+      <button class="button" onclick="saveMood()">Save Mood Entry</button>
+      <button class="button secondary" onclick="loadMoodForDate()">Load Selected Date</button>
+      <p id="moodMessage" class="small"></p>
+    </div>
+  </section>
+
+  <!-- EXERCISES -->
+  <section id="exercises">
+    <div class="section-heading"><h2>🌿 Relaxation & Self-Help Exercises</h2><p>Choose an activity that feels comfortable.</p></div>
+    <div class="grid">
+      <div class="card center">
+        <div class="icon">🌬️</div><h3>Gentle Breathing</h3>
+        <p>Breathe comfortably without forcing or holding your breath.</p>
+        <div class="breath-circle" id="breathCircle"><strong id="breathText">Ready?</strong><span class="small" id="breathSub">Your pace</span></div>
+        <div class="timer" id="breathTimer">01:00</div>
+        <button class="button" onclick="startBreathing()">Start</button>
+        <button class="button secondary" onclick="stopBreathing()">Stop</button>
+      </div>
+      <div class="card">
+        <div class="icon">🖐️</div><h3>5-4-3-2-1 Grounding</h3>
+        <div class="task">5 things you can see</div>
+        <div class="task">4 things you can feel through touch</div>
+        <div class="task">3 things you can hear</div>
+        <div class="task">2 things you can smell, if noticeable</div>
+        <div class="task">1 thing you can taste, if noticeable</div>
+        <button class="button" onclick="completeActivity('grounding')">Complete Activity</button>
+      </div>
+      <div class="card">
+        <div class="icon">📝</div><h3>Thought Reflection</h3>
+        <label for="thought">What thought is on your mind?</label>
+        <textarea id="thought" placeholder="Write your thought..."></textarea>
+        <label for="response">What would you say to a friend?</label>
+        <textarea id="response" placeholder="Write a kind response..."></textarea>
+        <button class="button" onclick="saveReflection()">Save Reflection</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ERP LEARNING -->
+  <section id="erp">
+    <div class="section-heading"><h2>🎯 ERP Learning & Practice</h2><p>Learn about Exposure and Response Prevention.</p></div>
+    <div class="grid">
+      <div class="card"><div class="icon">📘</div><h3>What is ERP?</h3><p>ERP is a specialised form of cognitive behavioural therapy used for OCD.</p><ul><li>Exposure involves gradually facing a planned trigger.</li><li>Response prevention means practising not performing the usual compulsion.</li><li>A qualified OCD therapist can help plan suitable exercises.</li></ul></div>
+      <div class="card"><div class="icon">🪜</div><h3>Practice Planner</h3>
+        <label for="erpGoal">Goal discussed with your therapist</label><input id="erpGoal" placeholder="Enter your planned goal">
+        <label for="erpLevel">Planned difficulty</label><select id="erpLevel"><option>Gentle</option><option>Moderate</option><option>Higher difficulty — therapist guided</option></select>
+        <label for="erpReflection">Session reflection</label><textarea id="erpReflection" placeholder="Optional notes"></textarea>
+        <button class="button" onclick="saveERP()">Save Practice Notes</button>
+        <div class="notice">Plan ERP with a qualified professional. This website does not prescribe treatment.</div>
+      </div>
+      <div class="card"><div class="icon">💜</div><h3>Supportive Reminder</h3><div class="good-notice" id="reminder">You can take things one step at a time.</div><button class="button" onclick="newReminder()">New Reminder</button></div>
+    </div>
+  </section>
+
+  <!-- VIDEOS -->
+  <section id="videos">
+    <div class="section-heading"><h2>🎥 Learning Video Resources</h2><p>Explore educational videos about OCD and relaxation.</p></div>
+    <div class="grid">
+      <div class="card"><div class="icon">🧠</div><h3>Understanding OCD</h3><p>Learn about obsessions and compulsions.</p><a class="video-link" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=International+OCD+Foundation+understanding+OCD">▶ Find OCD Videos</a></div>
+      <div class="card"><div class="icon">🎯</div><h3>ERP Education</h3><p>Explore educational explanations of ERP.</p><a class="video-link" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=International+OCD+Foundation+ERP+therapy">▶ Explore ERP Videos</a></div>
+      <div class="card"><div class="icon">🌿</div><h3>Relaxation</h3><p>Find guided breathing and mindfulness videos.</p><a class="video-link" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=guided+gentle+breathing+exercise">▶ Breathing Videos</a></div>
+    </div>
+    <div class="notice">These links open YouTube search results, not videos hosted by this website.</div>
+  </section>
+
+  <!-- AI CHATBOT INTERFACE -->
+  <section id="ai-chat">
+    <div class="section-heading"><h2>💜 Talk to Your AI Companion</h2><p>A supportive space where your feelings matter.</p></div>
+    <div class="ai-wrapper">
+      <aside class="ai-sidebar">
+        <div class="ai-profile">
+          <div class="ai-avatar">🧠</div>
+          <div><h3>Cerebral AI</h3><span class="ai-online">Support companion</span></div>
+        </div>
+        <p>Share only what you feel comfortable sharing.</p>
+        <div class="ai-tip">🌿 Try gentle breathing if you feel overwhelmed.</div>
+        <div class="ai-tip">💜 Your feelings deserve understanding, not judgment.</div>
+        <div class="ai-tip">📝 Writing your thoughts may help you reflect.</div>
+      </aside>
+
+      <div class="ai-chat-area">
+        <div class="ai-chat-header">
+          <div><h3>Your Personal Companion</h3><p>Emotional support & OCD awareness</p></div>
+          <button class="ai-clear-button" type="button" onclick="clearAIChat()">New Chat ↻</button>
+        </div>
+
+        <div class="ai-messages" id="aiMessages" aria-live="polite">
+          <div class="ai-message">
+            <div class="ai-message-avatar">🧠</div>
+            <div class="ai-bubble">Hi there! 💜 Welcome to Cerebral Companions.<br><br>I'm here to give you a supportive space to express your feelings. You can tell me about a difficult day, anxious feelings, or something troubling you.<br><br>What is on your mind today?</div>
+          </div>
+        </div>
+
+        <div class="ai-quick-actions">
+          <p>Not sure what to say? Start here:</p>
+          <div class="ai-prompt-list">
+            <button class="ai-prompt" type="button" onclick="selectAIMessage('I am feeling anxious today.')">😟 I feel anxious</button>
+            <button class="ai-prompt" type="button" onclick="selectAIMessage('I am feeling stressed and overwhelmed.')">😣 I feel stressed</button>
+            <button class="ai-prompt" type="button" onclick="selectAIMessage('I keep worrying about the same thought.')">💭 Repeated thoughts</button>
+            <button class="ai-prompt" type="button" onclick="selectAIMessage('Can you guide me through a grounding exercise?')">🌿 Grounding</button>
+            <button class="ai-prompt" type="button" onclick="selectAIMessage('I want to understand OCD better.')">🧠 Learn about OCD</button>
+          </div>
+        </div>
+
+        <form class="ai-input-area" id="aiChatForm" onsubmit="return false;">
+          <input type="text" id="aiUserInput" maxlength="2000" autocomplete="off" placeholder="Share what's on your mind..." required>
+          <button class="ai-send-button" type="button" aria-label="Send message">➤</button>
+        </form>
+        <div class="ai-privacy">Educational support tool · Not a replacement for professional care</div>
+      </div>
+    </div>
+    <div class="notice">Cerebral Companions Demo Mode is active.
+Your chatbot is connected to the backend.
+Avoid entering sensitive personal information.. AI replies will work after JavaScript and a secure backend are connected. Avoid entering sensitive personal information.</div>
+  </section>
+
+  <!-- CONSULTANTS -->
+<section id="consultants">
+  <div class="section-heading">
+    <h2>👩‍⚕️ Meet Our OCD Specialists</h2>
+    <p>Professional mental-health expertise and support.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="icon">👩‍⚕️</div>
+      <h3>Dr. Smriti Mahajan</h3>
+      <p><strong>Psychiatrist | OCD Specialist</strong></p>
+      <p>7+ Years of Experience</p>
+      <p>Dr. Smriti Mahajan is a psychiatrist specializing in OCD, with over 7 years of experience in mental-health care.</p>
+    </div>
+
+    <div class="card">
+      <div class="icon">👨‍⚕️</div>
+      <h3>Dr. Sumeet Inder Singh</h3>
+      <p><strong>Psychiatrist | OCD Specialist</strong></p>
+      <p>20+ Years of Experience</p>
+      <p>Dr. Sumeet Inder Singh is a psychiatrist and OCD specialist with over 20 years of experience in mental-health care.</p>
+    </div>
+  </div>
+</section>
+  <!-- PROGRESS -->
+  <section id="progress">
+    <div class="section-heading"><h2>📈 My Progress Dashboard</h2><p>Review your saved activity history.</p></div>
+    <div class="stat-grid">
+      <div class="stat"><strong id="moodCount">0</strong>Mood Entries</div>
+      <div class="stat"><strong id="activityCount">0</strong>Completed Activities</div>
+      <div class="stat"><strong id="reflectionCount">0</strong>Saved Reflections</div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3>Weekly Activity</h3><p id="weeklySummary">Start an activity to build your history.</p>
+      <div class="progress-track"><div class="progress-fill" id="weeklyProgress"></div></div>
+      <p id="weeklyText" class="small">0 of 7 days with completed activities</p>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3>Recent Mood Entries</h3><div id="historyList"><p class="small">No entries yet.</p></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <h3>Privacy & Data</h3><p>Your entries are stored in this browser, not sent to a server.</p>
+      <button class="button secondary" onclick="exportData()">Export My Data</button>
+      <button class="button" style="background:#b83f50" onclick="deleteData()">Delete All Data</button>
+      <p id="statusMessage" class="small"></p>
+    </div>
+  </section>
+
+  <section><div class="notice"><b>Important:</b> This educational prototype does not diagnose OCD or replace professional care. If you are in immediate danger, contact local emergency services. In India, Tele-MANAS can be reached at 14416.</div></section>
+</main>
+
+<footer><h3>🧠 Cerebral Companions</h3><p>A supportive step toward mental well-being.</p></footer>
+
+<script>
+const STORAGE_KEY = "cerebralCompanionsDataV1";
+
+function emptyData() {
+  return { moods: {}, activities: {}, reflections: [], erpNotes: [] };
+}
+
+function getData() {
+  try {
+    const d = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    return d ? { ...emptyData(), ...d } : emptyData();
+  } catch {
+    return emptyData();
+  }
+}
+
+function saveData(data) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    return true;
+  } catch {
+    alert("Unable to save data in this browser.");
+    return false;
+  }
+}
+
+function today() {
+  const d = new Date();
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0,10);
+}
+
+document.getElementById("moodDate").value = today();
+let selectedMood = "";
+
+function selectMood(button) {
+  selectedMood = button.dataset.mood;
+  document.querySelectorAll(".mood").forEach(b => b.classList.toggle("selected", b === button));
+}
+
+function saveMood() {
+  const date = document.getElementById("moodDate").value;
+  if (!date || !selectedMood) {
+    alert("Please select a date and mood.");
+    return;
+  }
+
+  const data = getData();
+  data.moods[date] = {
+    mood: selectedMood,
+    intensity: Number(document.getElementById("anxiety").value),
+    note: document.getElementById("moodNote").value
+  };
+
+  if (saveData(data)) {
+    document.getElementById("moodMessage").textContent = "Mood entry saved.";
+    renderDashboard();
+  }
+}
+
+function loadMoodForDate() {
+  const entry = getData().moods[document.getElementById("moodDate").value];
+  if (!entry) return alert("No saved entry for this date.");
+
+  selectedMood = entry.mood;
+  document.querySelectorAll(".mood").forEach(b => b.classList.toggle("selected", b.dataset.mood === selectedMood));
+  document.getElementById("anxiety").value = entry.intensity;
+  document.getElementById("anxietyValue").textContent = entry.intensity;
+  document.getElementById("moodNote").value = entry.note || "";
+}
+
+let breathInterval = null;
+let breathPhaseInterval = null;
+let breathRemaining = 60;
+
+function updateBreathTimer() {
+  document.getElementById("breathTimer").textContent =
+    String(Math.floor(breathRemaining / 60)).padStart(2,"0") + ":" +
+    String(breathRemaining % 60).padStart(2,"0");
+}
+
+function startBreathing() {
+  if (breathInterval) return;
+  breathRemaining = 60;
+  updateBreathTimer();
+
+  const circle = document.getElementById("breathCircle");
+  const text = document.getElementById("breathText");
+  const sub = document.getElementById("breathSub");
+  let inhale = true;
+
+  function phase() {
+    inhale = !inhale;
+    text.textContent = inhale ? "Breathe in" : "Breathe out";
+    sub.textContent = "Gently, at your own pace";
+    circle.classList.toggle("expand", inhale);
+  }
+
+  text.textContent = "Breathe in";
+  sub.textContent = "Gently, at your own pace";
+  circle.classList.add("expand");
+  breathPhaseInterval = setInterval(phase, 4000);
+
+  breathInterval = setInterval(() => {
+    breathRemaining--;
+    updateBreathTimer();
+    if (breathRemaining <= 0) {
+      stopBreathing();
+      text.textContent = "Well done!";
+      sub.textContent = "Take a moment";
+      completeActivity("breathing");
+    }
+  }, 1000);
+}
+
+function stopBreathing() {
+  clearInterval(breathInterval);
+  clearInterval(breathPhaseInterval);
+  breathInterval = null;
+  breathPhaseInterval = null;
+  document.getElementById("breathCircle").classList.remove("expand");
+  document.getElementById("breathText").textContent = "Take a rest";
+  document.getElementById("breathSub").textContent = "Breathe naturally";
+}
+
+function completeActivity(name) {
+  const data = getData();
+  const date = today();
+  if (!data.activities[date]) data.activities[date] = [];
+  if (!data.activities[date].includes(name)) data.activities[date].push(name);
+  saveData(data);
+  renderDashboard();
+  document.getElementById("statusMessage").textContent = "Activity recorded.";
+}
+
+function saveReflection() {
+  const thought = document.getElementById("thought").value.trim();
+  const response = document.getElementById("response").value.trim();
+  if (!thought && !response) return alert("Please write a reflection first.");
+
+  const data = getData();
+  data.reflections.push({ date: today(), thought, response });
+  if (saveData(data)) {
+    document.getElementById("thought").value = "";
+    document.getElementById("response").value = "";
+    completeActivity("reflection");
+  }
+}
+
+function saveERP() {
+  const goal = document.getElementById("erpGoal").value.trim();
+  if (!goal) return alert("Enter a goal discussed with your therapist.");
+
+  const data = getData();
+  data.erpNotes.push({
+    date: today(),
+    goal,
+    level: document.getElementById("erpLevel").value,
+    reflection: document.getElementById("erpReflection").value.trim()
+  });
+
+  if (saveData(data)) {
+    document.getElementById("erpGoal").value = "";
+    document.getElementById("erpReflection").value = "";
+    completeActivity("erp-planner");
+    alert("Practice notes saved.");
+  }
+}
+
+const reminders = [
+  "You can take things one step at a time.",
+  "Having a difficult thought does not define you.",
+  "You deserve kindness, including from yourself.",
+  "You do not have to solve everything today.",
+  "Asking a professional for help is a positive step."
+];
+
+function newReminder() {
+  document.getElementById("reminder").textContent =
+    reminders[Math.floor(Math.random() * reminders.length)];
+}
+
+function renderDashboard() {
+  const data = getData();
+  const entries = Object.entries(data.moods).sort((a,b) => b[0].localeCompare(a[0]));
+  document.getElementById("moodCount").textContent = entries.length;
+  document.getElementById("activityCount").textContent =
+    Object.values(data.activities).reduce((n, a) => n + a.length, 0);
+  document.getElementById("reflectionCount").textContent = data.reflections.length;
+
+  const history = document.getElementById("historyList");
+  history.replaceChildren();
+
+  if (!entries.length) {
+    const p = document.createElement("p");
+    p.className = "small";
+    p.textContent = "No entries yet.";
+    history.appendChild(p);
+  } else {
+    entries.slice(0,7).forEach(([date,e]) => {
+      const row = document.createElement("div");
+      row.className = "task";
+      row.textContent = `${date} — ${e.mood} · Intensity: ${e.intensity}/10${e.note ? " · " + e.note : ""}`;
+      history.appendChild(row);
+    });
+  }
+
+  let days = 0;
+  for (let i=0; i<7; i++) {
+    const d = new Date();
+    d.setDate(d.getDate()-i);
+    const date = new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+    if (data.activities[date]?.length) days++;
+  }
+
+  document.getElementById("weeklyProgress").style.width = (days/7*100) + "%";
+  document.getElementById("weeklyText").textContent = `${days} of 7 days with completed activities`;
+  document.getElementById("weeklySummary").textContent =
+    days ? `You recorded activities on ${days} day(s) in the last 7 days.` : "Start an activity to build your history.";
+}
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(getData(),null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "cerebral-companions-data.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function deleteData() {
+  if (!confirm("Permanently delete saved entries from this browser?")) return;
+  localStorage.removeItem(STORAGE_KEY);
+  selectedMood = "";
+  document.querySelectorAll(".mood").forEach(b => b.classList.remove("selected"));
+  document.getElementById("moodNote").value = "";
+  document.getElementById("anxiety").value = 3;
+  document.getElementById("anxietyValue").textContent = "3";
+  document.getElementById("thought").value = "";
+  document.getElementById("response").value = "";
+  document.getElementById("erpGoal").value = "";
+  document.getElementById("erpReflection").value = "";
+  renderDashboard();
+  document.getElementById("statusMessage").textContent = "Saved data deleted.";
+}
+
+/* AI interface only — actual AI connection will be added later */
+const aiMessages = document.getElementById("aiMessages");
+const aiUserInput = document.getElementById("aiUserInput");
+
+function selectAIMessage(message) {
+  aiUserInput.value = message;
+  aiUserInput.focus();
+}
+
+function clearAIChat() {
+  aiMessages.replaceChildren();
+  const row = document.createElement("div");
+  row.className = "ai-message";
+  const avatar = document.createElement("div");
+  avatar.className = "ai-message-avatar";
+  avatar.textContent = "🧠";
+  const bubble = document.createElement("div");
+  bubble.className = "ai-bubble";
+  bubble.textContent = "Welcome back 💜 What would you like to talk about today?";
+  row.append(avatar, bubble);
+  aiMessages.appendChild(row);
+}
+
+let chatHistory = [];
+
+document.getElementById("aiChatForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const form = document.getElementById("aiChatForm");
+    const input = form.querySelector("input, textarea");
+    const message = input.value.trim();
+
+    if (!message) return;
+
+    const messages = document.getElementById("aiMessages");
+
+    // Show user message
+    const userBubble = document.createElement("div");
+    userBubble.textContent = "You: " + message;
+    messages.appendChild(userBubble);
+
+    input.value = "";
+
+    const loading = document.createElement("div");
+    loading.textContent = "Cerebral Companion is typing...";
+    messages.appendChild(loading);
+
+    try {
+        const response = await fetch("/api/chat", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                message: message,
+                history: chatHistory
+            })
+        });
+
+        const data = await response.json();
+
+        loading.remove();
+
+        const botBubble = document.createElement("div");
+        botBubble.textContent = "Companion: " + data.reply;
+        messages.appendChild(botBubble);
+
+        if (response.ok) {
+            chatHistory.push(
+                { role: "user", content: message },
+                { role: "assistant", content: data.reply }
+            );
+
+            chatHistory = chatHistory.slice(-10);
+        }
+
+    } catch (error) {
+        loading.textContent = "Unable to connect to the server. Please try again.";
+        console.error(error);
+    }
+});
+
+document.querySelector(".ai-send-button").addEventListener("click", function() {
+  document.getElementById("aiChatForm").requestSubmit();
+});
+
+document.getElementById("moodDate").value = today();
+renderDashboard();
+updateBreathTimer();
+</script>
+
+</body>
+</html>
