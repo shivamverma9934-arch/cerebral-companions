@@ -380,6 +380,20 @@ footer p { color: #d6d4e9; font-size: 13px; }
   header { align-items: flex-start; flex-direction: column; }
   nav { gap: 10px; }
 }
+
+.dashboard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:18px}
+.dashboard-tile{display:flex;flex-direction:column;gap:7px;background:#fff;border:1px solid var(--border);border-radius:15px;padding:20px;text-decoration:none;color:var(--text);transition:transform .18s,box-shadow .18s}
+.dashboard-tile:hover{transform:translateY(-3px);box-shadow:0 9px 22px #28285012}
+.dashboard-tile span{font-size:29px}.dashboard-tile strong{font-size:16px}.dashboard-tile small{color:var(--muted);font-size:13px}
+.session-controls{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid var(--border);padding:16px 18px;border-radius:14px;margin-top:20px}
+.session-controls p{margin-top:4px}
+@media(max-width:800px){.dashboard-grid{grid-template-columns:1fr}.session-controls{align-items:flex-start}}
+
+
+/* Single-feature view navigation */
+main.container > section.view-hidden { display: none !important; }
+.view-toolbar { margin-top: 18px; }
+.view-toolbar .button { margin: 0; }
 </style>
 </head>
 
@@ -388,6 +402,7 @@ footer p { color: #d6d4e9; font-size: 13px; }
 <header>
   <div class="logo">🧠 Cerebral Companions</div>
   <nav>
+    <a href="#dashboard">Dashboard</a>
     <a href="#home">Home</a>
     <a href="#mood">Mood Tracker</a>
     <a href="#exercises">Exercises</a>
@@ -400,6 +415,9 @@ footer p { color: #d6d4e9; font-size: 13px; }
 </header>
 
 <main class="container">
+  <div class="view-toolbar" id="viewToolbar" style="display:none">
+    <button class="button secondary" type="button" onclick="showDashboard()">← Back to Dashboard</button>
+  </div>
 
   <!-- HOME -->
   <section class="hero" id="home">
@@ -412,6 +430,28 @@ footer p { color: #d6d4e9; font-size: 13px; }
       <a class="button secondary" href="#ai-chat">Talk to AI Companion</a>
     </div>
     <div class="hero-art">🌿🧠</div>
+  </section>
+
+
+  <!-- DASHBOARD OVERVIEW (added to the original site) -->
+  <section id="dashboard">
+    <div class="section-heading">
+      <h2>📊 Your Dashboard</h2>
+      <p>Quick access to all existing Cerebral Companions features.</p>
+    </div>
+    <div class="dashboard-grid">
+      <a class="dashboard-tile" href="#mood"><span>🌤️</span><strong>Daily Check-in</strong><small>Record today's mood</small></a>
+      <a class="dashboard-tile" href="#exercises"><span>🌬️</span><strong>Relaxation Exercises</strong><small>Breathing & grounding</small></a>
+      <a class="dashboard-tile" href="#erp"><span>🎯</span><strong>ERP Learning</strong><small>Learn and practise ERP</small></a>
+      <a class="dashboard-tile" href="#videos"><span>🎥</span><strong>Learning Videos</strong><small>Explore useful resources</small></a>
+      <a class="dashboard-tile" href="#ai-chat"><span>💜</span><strong>AI Companion</strong><small>Open supportive chat</small></a>
+      <a class="dashboard-tile" href="#consultants"><span>👩‍⚕️</span><strong>OCD Consultants</strong><small>View specialist details</small></a>
+      <a class="dashboard-tile" href="#progress"><span>📈</span><strong>Progress</strong><small>Review saved activity</small></a>
+    </div>
+    <div class="session-controls">
+      <div><strong>Session controls</strong><p class="small">Clear temporary browser-session data. Your saved mood and progress data will remain intact.</p></div>
+      <button class="button secondary" id="deleteSessionBtn" type="button">Delete Session</button>
+    </div>
   </section>
 
   <!-- FEATURES -->
@@ -654,24 +694,53 @@ function selectMood(button) {
   selectedMood = button.dataset.mood;
   document.querySelectorAll(".mood").forEach(b => b.classList.toggle("selected", b === button));
 }
-
-function saveMood() {
+async function saveMood() {
   const date = document.getElementById("moodDate").value;
+
   if (!date || !selectedMood) {
     alert("Please select a date and mood.");
     return;
   }
 
-  const data = getData();
-  data.moods[date] = {
+  const moodData = {
+    date: date,
     mood: selectedMood,
     intensity: Number(document.getElementById("anxiety").value),
     note: document.getElementById("moodNote").value
   };
 
-  if (saveData(data)) {
-    document.getElementById("moodMessage").textContent = "Mood entry saved.";
+  try {
+    const response = await fetch("/api/moods", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(moodData)
+    });
+
+    if (!response.ok) {
+      throw new Error("Unable to save mood.");
+    }
+
+    const data = getData();
+
+    data.moods[date] = {
+      mood: selectedMood,
+      intensity: moodData.intensity,
+      note: moodData.note
+    };
+
+    saveData(data);
+
+    document.getElementById("moodMessage").textContent =
+      "Mood entry saved successfully!";
+
     renderDashboard();
+
+  } catch (error) {
+    console.error(error);
+    document.getElementById("moodMessage").textContent =
+      "Unable to save mood. Please try again.";
   }
 }
 
@@ -797,13 +866,42 @@ function newReminder() {
     reminders[Math.floor(Math.random() * reminders.length)];
 }
 
-function renderDashboard() {
+async function renderDashboard() {
   const data = getData();
-  const entries = Object.entries(data.moods).sort((a,b) => b[0].localeCompare(a[0]));
+
+  try {
+    const response = await fetch("/api/moods");
+
+    if (!response.ok) {
+      throw new Error("Unable to load moods");
+    }
+
+    const result = await response.json();
+
+    data.moods = {};
+
+    result.data.forEach(entry => {
+      data.moods[entry.date] = {
+        mood: entry.mood,
+        intensity: entry.intensity,
+        note: entry.note || ""
+      };
+    });
+
+  } catch (error) {
+    console.error("Mood loading error:", error);
+  }
+
+  const entries = Object.entries(data.moods)
+    .sort((a, b) => b[0].localeCompare(a[0]));
+
   document.getElementById("moodCount").textContent = entries.length;
+
   document.getElementById("activityCount").textContent =
     Object.values(data.activities).reduce((n, a) => n + a.length, 0);
-  document.getElementById("reflectionCount").textContent = data.reflections.length;
+
+  document.getElementById("reflectionCount").textContent =
+    data.reflections.length;
 
   const history = document.getElementById("historyList");
   history.replaceChildren();
@@ -814,26 +912,38 @@ function renderDashboard() {
     p.textContent = "No entries yet.";
     history.appendChild(p);
   } else {
-    entries.slice(0,7).forEach(([date,e]) => {
+    entries.slice(0, 7).forEach(([date, e]) => {
       const row = document.createElement("div");
       row.className = "task";
-      row.textContent = `${date} — ${e.mood} · Intensity: ${e.intensity}/10${e.note ? " · " + e.note : ""}`;
+      row.textContent =
+        `${date} — ${e.mood} · Intensity: ${e.intensity}/10${e.note ? " · " + e.note : ""}`;
       history.appendChild(row);
     });
   }
 
   let days = 0;
-  for (let i=0; i<7; i++) {
+
+  for (let i = 0; i < 7; i++) {
     const d = new Date();
-    d.setDate(d.getDate()-i);
-    const date = new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+    d.setDate(d.getDate() - i);
+
+    const date = new Date(
+      d.getTime() - d.getTimezoneOffset() * 60000
+    ).toISOString().slice(0, 10);
+
     if (data.activities[date]?.length) days++;
   }
 
-  document.getElementById("weeklyProgress").style.width = (days/7*100) + "%";
-  document.getElementById("weeklyText").textContent = `${days} of 7 days with completed activities`;
+  document.getElementById("weeklyProgress").style.width =
+    (days / 7 * 100) + "%";
+
+  document.getElementById("weeklyText").textContent =
+    `${days} of 7 days with completed activities`;
+
   document.getElementById("weeklySummary").textContent =
-    days ? `You recorded activities on ${days} day(s) in the last 7 days.` : "Start an activity to build your history.";
+    days
+      ? `You recorded activities on ${days} day(s) in the last 7 days.`
+      : "Start an activity to build your history.";
 }
 
 function exportData() {
@@ -909,44 +1019,79 @@ document.getElementById("aiChatForm").addEventListener("submit", async function(
     loading.textContent = "Cerebral Companion is typing...";
     messages.appendChild(loading);
 
-    try {
-        const response = await fetch("/api/chat", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                message: message,
-                history: chatHistory
-            })
-        });
+       await new Promise(resolve => setTimeout(resolve, 700));
 
-        const data = await response.json();
+    loading.remove();
 
-        loading.remove();
+    const text = message.toLowerCase();
 
-        const botBubble = document.createElement("div");
-        botBubble.textContent = "Companion: " + data.reply;
-        messages.appendChild(botBubble);
+    let reply;
 
-        if (response.ok) {
-            chatHistory.push(
-                { role: "user", content: message },
-                { role: "assistant", content: data.reply }
-            );
-
-            chatHistory = chatHistory.slice(-10);
-        }
-
-    } catch (error) {
-        loading.textContent = "Unable to connect to the server. Please try again.";
-        console.error(error);
+    if (text.includes("anxious") || text.includes("anxiety") || text.includes("stress")) {
+        reply = "I understand that things may feel overwhelming right now. Try taking a slow, comfortable breath. Would you like to try a grounding exercise?";
+    } 
+    else if (text.includes("sad") || text.includes("low") || text.includes("upset")) {
+        reply = "I'm sorry you're having a difficult moment. You don't have to figure everything out at once. Would you like to share what's bothering you?";
+    } 
+    else if (text.includes("hello") || text.includes("hi") || text.includes("hey")) {
+        reply = "Hello! Welcome to Cerebral Companions. How are you feeling today?";
+    } 
+    else if (text.includes("sleep")) {
+        reply = "A calming bedtime routine may help. Try reducing screen time and doing a gentle relaxation exercise before bed.";
+    } 
+    else if (text.includes("ocd")) {
+        reply = "OCD can be challenging. Learning about obsessions and compulsions is a useful first step. A qualified mental health professional can guide treatment.";
+    } 
+    else {
+        reply = "Thank you for sharing that with me. Can you tell me a little more about how you're feeling? I'm here to help you explore some general coping strategies.";
     }
-});
 
+    const botBubble = document.createElement("div");
+    botBubble.textContent = "Companion: " + reply;
+    messages.appendChild(botBubble);
+
+    chatHistory.push(
+        { role: "user", content: message },
+        { role: "assistant", content: reply }
+    );
+
+    chatHistory = chatHistory.slice(-10);
+});
 document.querySelector(".ai-send-button").addEventListener("click", function() {
   document.getElementById("aiChatForm").requestSubmit();
 });
+
+// Single-view navigation: show only the selected feature section.
+const mainViews = Array.from(document.querySelectorAll('main.container > section'));
+const dashboardView = document.getElementById('dashboard');
+const viewToolbar = document.getElementById('viewToolbar');
+function showView(id, updateHash=true) {
+  const target = id === 'dashboard' ? dashboardView : document.getElementById(id);
+  if (!target || !mainViews.includes(target)) return showDashboard(updateHash);
+  mainViews.forEach(section => section.classList.toggle('view-hidden', section !== target));
+  viewToolbar.style.display = target === dashboardView ? 'none' : 'block';
+  if (updateHash) history.replaceState(null, '', '#' + id);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function showDashboard(updateHash=true) {
+  mainViews.forEach(section => section.classList.toggle('view-hidden', section !== dashboardView));
+  viewToolbar.style.display = 'none';
+  if (updateHash) history.replaceState(null, '', '#dashboard');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+// Intercept internal links so a click opens one section instead of scrolling through all sections.
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', function(e) {
+    const id = this.getAttribute('href').slice(1);
+    if (id === 'dashboard') { e.preventDefault(); showDashboard(); }
+    else if (document.getElementById(id) && mainViews.includes(document.getElementById(id))) {
+      e.preventDefault(); showView(id);
+    }
+  });
+});
+const initialView = location.hash.slice(1);
+if (initialView && initialView !== 'dashboard' && document.getElementById(initialView) && mainViews.includes(document.getElementById(initialView))) showView(initialView, false);
+else showDashboard(false);
 
 document.getElementById("moodDate").value = today();
 renderDashboard();
