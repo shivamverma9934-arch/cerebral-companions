@@ -842,29 +842,7 @@ function newReminder() {
 async function renderDashboard() {
   const data = getData();
 
-  try {
-    const response = await fetch("/api/moods");
-
-    if (!response.ok) {
-      throw new Error("Unable to load moods");
-    }
-
-    const result = await response.json();
-
-    data.moods = {};
-
-    result.data.forEach(entry => {
-      data.moods[entry.date] = {
-        mood: entry.mood,
-        intensity: entry.intensity,
-        note: entry.note || ""
-      };
-    });
-
-  } catch (error) {
-    console.error("Mood loading error:", error);
-  }
-
+ 
   const entries = Object.entries(data.moods)
     .sort((a, b) => b[0].localeCompare(a[0]));
 
