@@ -694,7 +694,7 @@ function selectMood(button) {
   selectedMood = button.dataset.mood;
   document.querySelectorAll(".mood").forEach(b => b.classList.toggle("selected", b === button));
 }
-async function saveMood() {
+function saveMood() {
   const date = document.getElementById("moodDate").value;
 
   if (!date || !selectedMood) {
@@ -702,48 +702,21 @@ async function saveMood() {
     return;
   }
 
-  const moodData = {
-    date: date,
+  const data = getData();
+
+  data.moods[date] = {
     mood: selectedMood,
     intensity: Number(document.getElementById("anxiety").value),
     note: document.getElementById("moodNote").value
   };
 
-  try {
-    const response = await fetch("/api/moods", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(moodData)
-    });
+  saveData(data);
 
-    if (!response.ok) {
-      throw new Error("Unable to save mood.");
-    }
+  document.getElementById("moodMessage").textContent =
+    "Mood entry saved successfully on this device!";
 
-    const data = getData();
-
-    data.moods[date] = {
-      mood: selectedMood,
-      intensity: moodData.intensity,
-      note: moodData.note
-    };
-
-    saveData(data);
-
-    document.getElementById("moodMessage").textContent =
-      "Mood entry saved successfully!";
-
-    renderDashboard();
-
-  } catch (error) {
-    console.error(error);
-    document.getElementById("moodMessage").textContent =
-      "Unable to save mood. Please try again.";
-  }
+  renderDashboard();
 }
-
 function loadMoodForDate() {
   const entry = getData().moods[document.getElementById("moodDate").value];
   if (!entry) return alert("No saved entry for this date.");
